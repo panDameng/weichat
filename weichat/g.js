@@ -7,7 +7,7 @@ var Wechat = require('./weichat.js');
 
 module.exports = function(opts){
     //var wechat = new Wechat(opts);//调用实例函数
-    
+
     return function * (next){//使用generator生成器传入
         console.log(this.query);//打印出url地址中携带的参数。
         var that = this;//this永远指向当前对象的，赋值给that后的这个对象永远指向当前所在的对象
@@ -33,7 +33,7 @@ module.exports = function(opts){
                 this.body = 'wrong';
                 return false;
             }
-            var data = yield getRawBody(this.req, {
+            var data = yield getRawBody(this.req, {//接收xml形式的data数据
                 length:this.length,
                 limit:'1mb',
                 encoding:this.charset
@@ -43,21 +43,18 @@ module.exports = function(opts){
             console.log(content);//可以查看输出得到数据是键值对，其value为数组，须在进一步解析
             var message = util.formatMessage(content.xml);//解析数组
             console.log(message);
-            if(message.MsgType ===  'event'){//判断当前是否为事件
-                if(message.Event === 'subscribe'){//判断当前是否为订阅事件
-                    var now = new Date().getTime();
-                    that.status = 200;
-                    that.type = 'application/xml';
-                    that.body = '<xml>' +
-                                '<ToUserName><![CDATA['+ message.FromUserName +']]></ToUserName>' +
-                                '<FromUserName><![CDATA['+ message.ToUserName +']]></FromUserName>' +
-                                '<CreateTime>'+ now +'</CreateTime>' +
-                                '<MsgType><![CDATA[text]]></MsgType>' +
-                                '<Content><![CDATA[Hi! sir]]></Content>' +
-                                '</xml>';
-                    return 
-                }
-            }
+            this.weixin = message;
+            yield handler.call(this, next);//切换执行上下文，在新函数里的this实际上是指当前函数
+            wechat.reply.call(this);//调用方法并修改执行上下文
+            // if(message.MsgType ===  'event'){//判断当前是否为事件
+            //     if(message.Event === 'subscribe'){//判断当前是否为订阅事件
+            //         var now = new Date().getTime();
+            //         that.status = 200;
+            //         that.type = 'application/xml';
+            //         that.body = msgxml;
+            //         return 
+            //     }
+            // }
         }
        
     }

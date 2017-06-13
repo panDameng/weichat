@@ -1,6 +1,7 @@
 'use strict'
 
 var Promise = require('bluebird');//引入promise库
+var util = require('./util.js');
 var request = Promise.promisify(require('request'));//通过promisify化的request才拥有.then的方法
 //查看获取accessToken的文档找到他的请求地址，并将其分解，便于后期维护和使用
 var urlPrefix = 'https://api.weixin.qq.com/cgi-bin/';
@@ -66,8 +67,15 @@ Wechat.prototype.updateAccessToken = function(data) {//在原型链上增加验�
 
             resolve(data);
         })
-    })
-    
+    })   
+}
+Wechat.prototype.reply = function(){
+    var content = this.body;
+    var message = this.weixin;
+    var xml = util.tpl(content, message);
+    this.status = 200;
+    this.type = 'application/xml';
+    this.body = xml;
 }
 
 module.exports = Wechat;
