@@ -5,8 +5,8 @@ var getRawBody = require('raw-body');//获取http模块中request对象，并拼
 var util = require('./util.js');//工具包，
 var Wechat = require('./weichat.js');
 
-module.exports = function(opts){
-    //var wechat = new Wechat(opts);//调用实例函数
+module.exports = function(opts, handler){
+    var wechat = new Wechat(opts);//调用实例函数
 
     return function * (next){//使用generator生成器传入
         console.log(this.query);//打印出url地址中携带的参数。
@@ -55,6 +55,7 @@ module.exports = function(opts){
             //         return 
             //     }
             // }
+            return;
         }
        
     }

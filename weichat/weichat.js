@@ -26,7 +26,7 @@ function Wechat(opts)//创建一个原型函数
                 return that.updateAccessToken();//如果转换出错了说明是AccessToken失效了，调用更新方法
             }
             if(that.isValidAccessToken(data)){//转换成功后进行验证
-                Promise.resolve();
+                return Promise.resolve(data);
             }else{
                 return that.updateAccessToken();//验证失败进行更新
             }
@@ -72,10 +72,19 @@ Wechat.prototype.updateAccessToken = function(data) {//在原型链上增加验�
 Wechat.prototype.reply = function(){
     var content = this.body;
     var message = this.weixin;
+    console.log(345657);
+    console.log(message);
     var xml = util.tpl(content, message);
+    console.log(xml);
     this.status = 200;
     this.type = 'application/xml';
     this.body = xml;
+
+    // var url = urlPrefix + 'get_current_autoreply_info?access_token=' + this.access_token;
+    // console.log('打钱我放弃我');
+    // console.log(that.access_token);
+    // request({url:url, json:true});
+
 }
 
 module.exports = Wechat;

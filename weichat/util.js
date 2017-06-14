@@ -2,7 +2,7 @@
 
 var xml2js = require('xml2js');
 var Promise = require('bluebird');
-var tpl = require('./util.js');
+var tpls = require('./tpl.js');
 
 exports.parseXMLAsync = function(xml){//异步解析xml
 	return new Promise(function(resolve, reject){
@@ -48,8 +48,10 @@ exports.formatMessage = formatMessage;
 exports.tpl = function(content, message){
 	var info = {};
 	var type = 'text';
-	var fromUserName = message.fromUserName;
-	var toUserName = message.toUserName;
+	var fromUserName = message.FromUserName;
+	console.log(23333);
+	console.log(message.FromUserName);
+	var toUserName = message.ToUserName;
 	if(Array.isArray(content)){//是数组说明是图文消息
 		type = 'news';
 	}
@@ -59,5 +61,5 @@ exports.tpl = function(content, message){
 	info.msgType = type;
 	info.toUserName = fromUserName;
 	info.fromUserName = toUserName;
-	return tpl.compiled(info)
+	return tpls.compiled(info);
 }
